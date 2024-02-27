@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            text-align: right;
+            background-color: #111;
+            padding: 10px 20px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #e50914;
+        }
+
+        h1, h2 {
+            color: #e50914;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #111;
+            color: white;
+        }
+
+        td a {
+            color: #e50914;
+            text-decoration: none;
+        }
+
+        td button {
+            padding: 5px 10px;
+            background-color: #0074cc; 
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin-right: 5px;
+        }
+
+        td button:hover {
+            background-color: #0056b3;
+        }
+
+        td form {
+            display: inline-block; 
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="/admin/add">Add User</a>
+        <a href="/admin/add-movie">Add Movie</a>
+        <a href="/">Movie-Trailers</a>
+        <a href="/logout">Logout</a>
+    </nav>
+
+    <h1>Admin Page - User Management</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Admin Status</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Deleted At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><%= user.username %></td>
+                    <td><%= user.isAdmin ? 'Admin' : 'User' %></td>
+                    <td><%= user.createdAt %></td>
+                    <td><%= user.updatedAt %></td>
+                    <td><%= user.deletedAt %></td>
+                    <td>
+                        <form action="/admin/edit/<%= user._id %>" method="get">
+                            <button type="submit">Edit</button>
+                        </form>
+                        <form action="/admin/delete/<%= user._id %>" method="post" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                            <button style="background-color: #e50914;" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <h2>Movies</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Images</th>
+                <th>Trailer</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Deleted At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% movies.forEach(movie => { %>
+                <tr>
+                    <td><%= movie.title %></td>
+                    <td><%= movie.description %></td>
+                    <td>
+                        <% for (let i = 1; i <= 3; i++) { %>
+                            <% if (movie[`image${i}`]) { %>
+                                <a href="<%= movie[`image${i}`] %>">Image <%= i %></a>
+                            <% } %>
+                        <% } %>
+                    </td>
+                    <td><%= movie.trailer %></td>
+                    <td><%= movie.createdAt %></td>
+                    <td><%= movie.updatedAt %></td>
+                    <td><%= movie.deletedAt %></td>
+                    <td>
+                        <form action="/admin/edit-movie/<%= movie._id %>" method="get">
+                            <button type="submit" class="edit-btn">Edit</button>
+                        </form>
+                        <form action="/admin/delete-movie/<%= movie._id %>" method="post" onsubmit="return confirm('Are you sure you want to delete this movie?')">
+                            <button style="background-color: #e50914;" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>

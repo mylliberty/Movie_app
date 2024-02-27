@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #e50914;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        nav {
+            text-align: right;
+            margin-bottom: 20px;
+            background-color: #111;
+            padding: 10px 20px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #e50914;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        .search-container {
+            height: 350px;
+            margin-top: 50px;
+            background-image: url('https://wallpaperbat.com/img/282369-poster-movie-film-movies-posters-wallpaper-5120x2880-859165.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 50px 20px;
+            text-align: center;
+        }
+        
+        .search-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin:auto;
+            margin-top: 80px;
+            width:35%;
+            height: 80px;
+            background-color: #1e1e1e;
+            border-radius: 10px;
+        }
+
+        form {
+            text-align: center;
+        }
+
+        form label {
+            color: white;
+        }
+
+        form input {
+            padding: 5px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        form button {
+            padding: 8px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #ff0a16;
+        }
+
+        .movie-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 20px;
+        }
+
+        .movie-post {
+            width: 22%;
+            margin: 1%;
+            padding: 20px;
+            border: 1px solid #333;
+            background-color: #141414;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .movie-post h2 {
+            color: #e50914;
+        }
+
+        .movie-slider {
+            margin: 20px 0;
+        }
+
+        .movie-slider img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .movie-post p {
+            margin-top: 10px;
+        }
+
+        .movie-post small {
+            display: block;
+            margin-top: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #8c8c8c;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            max-width: 80%;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .modal-flex-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;;
+        }
+        .modal-poster {
+            max-width: 40%;
+        }
+
+        .modal-text {
+            max-width: 50%;
+            padding-left: 20px; 
+            box-sizing: border-box; 
+        }
+
+        .modal-text h2 {
+            margin-top: 0; 
+        }
+
+        .modal-poster img {
+            margin-left: 50px; 
+            width: 80%; 
+            border-radius: 10px;
+        }
+
+        .modal-trailer {
+            margin-top: 20px;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; 
+            position: relative;
+        }
+
+        .modal-trailer iframe {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <% if (userIsLoggedIn) { %>
+            <a href="#" style="color: white; margin-right: 10px;"><%= userIsLoggedIn.username %></a>
+            <a href="/logout">Logout</a>
+            <% if (userIsLoggedIn.isAdmin) { %>
+                <a href="/admin">Back to Admin Page</a>
+            <% } %>
+        <% } else { %>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        <% } %>
+    </nav>
+
+    <% if (userIsLoggedIn) { %>
+        <div class="search-container">
+            <div class="search-form">
+                <form action="/movie" method="get">
+                    <label for="title">Enter Movie Name:</label>
+                    <input type="text" id="title" name="title" required>
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="movie-container">
+            <% movies.forEach(movie => { %>
+                <div class="movie-post clearfix">
+                    <h2><%= movie.title %></h2>
+                    <div class="movie-slider">
+                        <% for (let i = 1; i <= 3; i++) { %>
+                            <% if (movie[`image${i}`]) { %>
+                                <img src="<%= movie[`image${i}`] %>" alt="Movie Image <%= i %>"
+                                     onclick="openModal('<%= movie.title %>', '<%= movie.description %>', '<%= movie.trailer %>', '<%= movie.image1 %>')">
+                            <% } %>
+                        <% } %>
+                    </div>
+                    <p><%= movie.description %></p>
+                    <small>Posted on <%= movie.createdAt.toDateString() %></small>
+                </div>
+            <% }) %>
+        </div>
+
+        <div id="movieModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div class="modal-flex-container">
+                    <div class="modal-poster">
+                        <img id="modalPoster" src="" alt="Movie Poster">
+                    </div>
+                    <div class="modal-text">
+                        <h2 id="modalTitle"></h2>
+                        <p id="modalDescription"></p>
+                        <div class="modal-trailer" id="modalTrailer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Adil Daniyar SE-2206
+        </footer>
+
+    <% } else { %>
+        <h1>Welcome to the Movie App</h1>
+        <p>You are not logged in. <a style="text-decoration: inherit;" href="/login">Login</a> or <a style="text-decoration: inherit;" href="/register">Register</a></p>
+    <% } %>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script>
+        $('.movie-slider').slick({
+            dots: true,
+            infinite: true,
+            speed: 500,
+            slidesToShow: 1,
+            slidesToScroll: 1
+        });
+
+        function openModal(title, description, trailer, poster) {
+            const modal = document.getElementById('movieModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalTrailer = document.getElementById('modalTrailer');
+            const modalPoster = document.getElementById('modalPoster');
+
+            modalTitle.textContent = title;
+            modalDescription.textContent = description;
+            modalPoster.src = poster;
+
+            const videoId = getYouTubeVideoId(trailer);
+            modalTrailer.innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>`;
+
+            modal.style.display = 'block';
+        }
+
+
+        function closeModal() {
+            const modal = document.getElementById('movieModal');
+            modal.style.display = 'none';
+        }
+
+        function getYouTubeVideoId(url) {
+            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[7].length === 11) ? match[7] : '';
+        }
+    </script>
+</body>
+
+</html>
