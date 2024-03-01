@@ -7,7 +7,7 @@ const ejs = require('ejs');
 const User = require('./models/User');
 const Movie = require('./models/Movie');
 const axios = require('axios');
-require('dotenv').config(); 
+
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,17 +20,52 @@ app.use(session({
 }));
 app.set('view engine', 'ejs');
 
-const dbUrl = "mongodb+srv://daniyaradil2004:3872fsFF@cluster0.rqufec3.mongodb.net/assik4";
+const dbUrl = "mongodb+srv://dana:dana@cluster0.dfjnrfx.mongodb.net/MovieDB"; // Replace 'yourdbname' with your actual database name
 const connectionParams = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 };
 
-mongoose.connect(dbUrl, connectionParams)
-    .then(() => console.info("Connected to the database"))
-    .catch((e) => console.log("Error connecting to the database", e));
+// Connect to MongoDB
+mongoose.connect(dbUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    console.log("CONNECTED TO DATABASE SUCCESSFULLY");
+    // Start the server after successfully connecting to the database
+    app.listen(3000, () => {
+      console.log('Server is running on port 3000');
+    });
+  })
+  .catch((error) => {
+    console.error('COULD NOT CONNECT TO DATABASE:', error.message);
+  });
+  
+
+// Handle user registration
+app.post("/register", async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        // Hash the password before storing it in the database
+        const hashedPassword = await bcrypt.hash(password, 10);
+        // Create a new user instance
+        const newUser = new User({
+            username: username,
+            password: hashedPassword
+        });
+        // Save the user to the database
+        await newUser.save();
+        // Send a success message and redirect to the login page using JavaScript
+        res.send("<script>alert('Successfully registered'); window.location.href = '/login';</script>");
+    } catch (error) {
+        console.error("Error registering user:", error);
+        res.status(500).send("An error occurred while registering the user");
+    }
+});
 
 
+// Route to render the homepage
 app.get("/", async function (req, res) {
     try {
         const movies = await Movie.find({ deletedAt: null }).sort({ createdAt: 'desc' }).exec();
@@ -277,6 +312,8 @@ app.get("/", function (req, res) {
 });
 
  
-app.listen(3000, function () {
-    console.log("Server is running on port 3000");
+const port = process.env.PORT || 8080; // Use the PORT environment variable if available, otherwise use port 3000
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
