@@ -22,8 +22,8 @@ Welcome to the Movie App, a simple web application to explore and discover movie
  > npm install 
  
  * Account for admin status is 
- > username: daniyar 
- > password: 0404 
+ > username: dana
+ > password: dana
  
  * If you want to see the database using VScode, here is the links 
- > mongodb+srv://daniyaradil2004:3872fsFF@cluster0.rqufec3.mongodb.net/assik4
+ > mongodb+srv://dana:dana@cluster0.dfjnrfx.mongodb.net/MovieDB
